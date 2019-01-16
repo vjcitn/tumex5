@@ -1,4 +1,5 @@
 #' bind microsatellite instability scores via MSIsensor to a TCGA expression dataset
+#' @importFrom BiocOncoTK bindMSI
 #' @param tumcode character(1) e.g., "COAD"
 #' @param genesym character(1) gene symbol
 #' @param alias character(1) an alternative name for gene

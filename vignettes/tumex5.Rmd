@@ -4,7 +4,7 @@ author: "Vincent J. Carey, stvjc at channing.harvard.edu"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{}
+  %\VignetteIndexEntry{tumex5: expression data on 5 TCGA tumors backed by HSDS}
   %\VignetteEncoding{UTF-8}
 output:
   BiocStyle::html_document:

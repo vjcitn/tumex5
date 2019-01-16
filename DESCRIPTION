@@ -5,6 +5,7 @@ Version: 0.0.2
 Author: Vince Carey
 Suggests: knitr
 Depends: R (>= 3.5.0), methods, SummarizedExperiment, restfulSE
+Imports: BiocOncoTK
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0
 LazyLoad: yes
