@@ -1,9 +1,9 @@
 Package: tumex5
 Title: RNASeq2GeneNorm assays in HDF Scalable Data Service for five TCGA tumors
 Description: Interface to RNASeq2GeneNorm assays in HDF Scalable Data Service for five TCGA tumors.
-Version: 0.0.2
+Version: 0.0.3
 Author: Vince Carey
-Suggests: knitr
+Suggests: knitr, ggplot2, rhdf5client
 Depends: R (>= 3.5.0), methods, SummarizedExperiment, restfulSE
 Imports: BiocOncoTK
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
