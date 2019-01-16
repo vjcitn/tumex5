@@ -1,0 +1,87 @@
+---
+title: "tumex5: Five TCGA tumors' expression data for workflow experimentation"
+author: "Vincent J. Carey, stvjc at channing.harvard.edu"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::html_document:
+    highlight: pygments
+    number_sections: yes
+    theme: united
+    toc: yes
+---
+
+```{r setup,echo=FALSE}
+suppressPackageStartupMessages({
+suppressMessages({
+library(rhdf5client)
+library(tumex5)
+library(BiocOncoTK)
+library(restfulSE)
+})
+})
+```
+
+# Introduction
+
+We would like to demonstrate how workflows can employ
+HSDS and (RESTful) SummarizedExperiment instances.
+
+We retrieved five tumors' expression data using
+curatedTCGAData.  These were converted to HDF5 SummarizedExperiment
+instances, and the HDF5 representations of quantifications
+were ported to HSDS using hsload.
+
+The following function produces a 'long' dataset for a
+given tumor type, binding the MSIsensor scores of Ding et al 2018.
+
+```{r def}
+ exprByMSI = function(tumcode, genesym, alias) {
+  if (missing(alias)) alias=genesym
+  ob = paste0(tumcode, "rnagn")
+  ex = get(ob)
+  ex = BiocOncoTK::bindMSI(ex)
+  data.frame(
+   patient_barcode=colnames(ex),
+   acronym=tumcode,
+   symbol = genesym,
+   alias = alias,
+   log2ex=log2(as.numeric(SummarizedExperiment::assay(ex[genesym,]))+1),
+   msicode = ifelse(ex$msiTest >= 4, ">=4", "<4"))
+ }
+head(exprByMSI("COAD", "CD8A"))
+```
+
+# Application
+
+We define a small set of genes indicative of immune
+infiltration of tumor.  We then build a data.frame
+instance with tumor codes and gene symbols constituting
+all combinations of tumor type and gene.
+```{r opts}
+infilGenes = c(`PD-L1`="CD274", `PD-L2`="PDCD1LG2", CD8A="CD8A")
+tumcodes = c("COAD", "STAD", "UCEC")
+combs = expand.grid(tumcode=tumcodes, ali=names(infilGenes),
+    stringsAsFactors=FALSE)
+combs$sym = infilGenes[combs$ali]
+```
+
+The job is completed by building a long data.frame
+for all combinations and visualizing.
+
+```{r lktab, fig.height=5}
+ allshow = lapply(1:nrow(combs), function(x) exprByMSI(combs$tumcode[x],
+    combs$sym[x], combs$ali[x]))
+ 
+ rr = do.call(rbind, allshow)
+ 
+ library(ggplot2)
+ ggplot(rr,
+    aes(msicode, log2ex)) + geom_boxplot() +
+    facet_grid(acronym~alias) +
+    ylab("log2(normalized expr. + 1)") +
+    xlab("microsatellite instability score")
+```
